@@ -61,7 +61,7 @@ with col1:
     st.metric(label="Total Historical Records", value=f"{len(df):,}")
 with col2:
     # Calculate dynamic threshold example
-    avg_thresh = round(df['threshold_95th'].mean(), 2)
+    avg_thresh = round(df['monthly_threshold'].mean(), 2)
     st.metric(label="Mean Extreme Threshold (95th %)", value=f"{avg_thresh} mm")
 with col3:
     recall_val = "66.0%" if station == "London Heathrow" else "61.4% (Baseline)"
