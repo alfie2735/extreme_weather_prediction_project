@@ -21,6 +21,8 @@ def load_and_preprocess():
 
     df = df.reset_index()
 
+    return df
+
 def compute_extreme_thresholds(df):
 
     df = df.copy()
