@@ -21,6 +21,7 @@ st.title("⛈️ Predicting the Unpredictable")
 st.markdown("""
 An end-to-end Machine Learning pipeline predicting extreme rainfall events using 20 years of historical climate data. 
 Inspired by the forecasting methodologies of the **Met Office**.
+THIS APP IS STILL UNDER DEVELOPMENT - SOME DATA MAY BE INCORRECTS
 """)
 
 # ----------------- Sidebar Controls -----------------
@@ -75,5 +76,5 @@ with chart_col:
 with data_col:
     st.subheader("🔍 Engineered Dataset Feature Sample")
     st.write("Inspect the inputs sent to the Random Forest model:")
-    cols_to_show = ['precipitation', 'pressure_lag_48h', 'sin_day', 'is_extreme_event']
+    cols_to_show = ['pres', 'pres_lag_1', 'pres_lag_2', 'extreme_rain']
     st.dataframe(df[cols_to_show].head(10), use_container_width=True)
