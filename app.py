@@ -55,18 +55,6 @@ def get_processed_data():
 
 df = get_processed_data()
 
-# 1. High-Level Metrics Layout
-col1, col2, col3 = st.columns(3)
-with col1:
-    st.metric(label="Total Historical Records", value=f"{len(df):,}")
-with col2:
-    # Calculate dynamic threshold example
-    avg_thresh = round(df['monthly_threshold'].mean(), 2)
-    st.metric(label="Mean Extreme Threshold (95th %)", value=f"{avg_thresh} mm")
-with col3:
-    recall_val = "66.0%" if station == "London Heathrow" else "61.4% (Baseline)"
-    st.metric(label="Model Recall (TPR)", value=recall_val)
-
 # 2. Interactive Columns for Visualisations
 chart_col, data_col = st.columns([2, 1])
 
