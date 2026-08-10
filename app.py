@@ -79,7 +79,7 @@ def get_processed_data(start, end):
     df_final = engineer_features(df_thresholded)
     return df_final
 
-df = get_processed_data()
+df = get_processed_data(start, end)
 
 # 2. Interactive Columns for Visualisations
 chart_col, data_col = st.columns([2, 1])
