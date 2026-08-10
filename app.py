@@ -4,6 +4,7 @@ import numpy as np
 import joblib
 import matplotlib.pyplot as plt
 import seaborn as sns
+import datetime as dt
 
 # Import your custom pipeline modules
 from src.data_pipeline import load_and_preprocess, compute_extreme_thresholds
@@ -33,6 +34,30 @@ station = st.sidebar.selectbox(
     ["London Heathrow", "Manchester Airport", "Cardiff", "Edinburgh"]
 )
 
+st.sidebar.header("⚙️ Simulation Parameters")
+
+# 1. Interactive Date Range Selector
+date_range = st.sidebar.slider(
+    "Select Historical Window (Years):",
+    min_value=1,
+    max_value=20,
+    value=10
+)
+
+# 2. Interactive Risk Threshold Control
+risk_threshold = st.sidebar.slider(
+    "Sensitivity / Percentile Threshold (%):",
+    min_value=90.0,
+    max_value=99.0,
+    value=95.0,
+    step=0.5,
+    help="Higher values define stricter 'extreme' rain events."
+)
+
+# Automatically calculate dynamic start and end dates relative to today
+end = dt.now() - dt.timedelta(days=1)  # Yesterday (latest Meteostat Daily update)
+start = end - dt.timedelta(days=365 * date_range)
+
 # Sidebar description
 st.sidebar.markdown("""
 ---
@@ -47,9 +72,9 @@ st.write(f"### Current Station Analysis: **{station}**")
 
 # Simulate loading and preprocessing data
 @st.cache_data # Caches data so changing sidebar options is lightning fast
-def get_processed_data():
+def get_processed_data(start, end):
     # In practice, point this to your filtered master dataset or individual files
-    df_raw = load_and_preprocess()
+    df_raw = load_and_preprocess(start, end)
     df_thresholded = compute_extreme_thresholds(df_raw)
     df_final = engineer_features(df_thresholded)
     return df_final

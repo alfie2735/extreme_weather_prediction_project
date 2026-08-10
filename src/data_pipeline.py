@@ -2,10 +2,7 @@ import datetime as dt
 import meteostat as ms
 import numpy as np
 
-def load_and_preprocess():
-
-    start = dt.date(2006, 1, 1)
-    end = dt.date(2025, 12, 31)
+def load_and_preprocess(start, end):
 
     point = ms.Point(51.4776, -0.4619, 25)
 
