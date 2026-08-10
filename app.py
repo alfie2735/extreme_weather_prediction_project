@@ -4,7 +4,7 @@ import numpy as np
 import joblib
 import matplotlib.pyplot as plt
 import seaborn as sns
-import datetime as dt
+from datetime import datetime, timedelta
 
 # Import your custom pipeline modules
 from src.data_pipeline import load_and_preprocess, compute_extreme_thresholds
@@ -55,8 +55,8 @@ risk_threshold = st.sidebar.slider(
 )
 
 # Automatically calculate dynamic start and end dates relative to today
-end = dt.now() - dt.timedelta(days=1)  # Yesterday (latest Meteostat Daily update)
-start = end - dt.timedelta(days=365 * date_range)
+end = datetime.now() - timedelta(days=1)  # Yesterday (latest Meteostat Daily update)
+start = end - timedelta(days=365 * date_range)
 
 # Sidebar description
 st.sidebar.markdown("""
