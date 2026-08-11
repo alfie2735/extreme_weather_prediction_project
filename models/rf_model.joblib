@@ -13,4 +13,4 @@ rf_model = RandomForestClassifier(n_estimators = 100, class_weight = 'balanced_s
 
 rf_model.fit(X_train, y_train)
 
-joblib.dump(model, 'models/rf_model.joblib')
+joblib.dump(rf_model, 'models/rf_model.joblib')
