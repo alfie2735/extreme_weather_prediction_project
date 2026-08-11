@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from datetime import datetime, timedelta
 from sklearn.ensemble import RandomForestClassifier
+import plotly.express as px
 
 # Import your custom pipeline modules
 from src.data_pipeline import load_and_preprocess, compute_extreme_thresholds
