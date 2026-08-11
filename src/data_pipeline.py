@@ -20,13 +20,13 @@ def load_and_preprocess(start, end):
 
     return df
 
-def compute_extreme_thresholds(df):
+def compute_extreme_thresholds(df, risk_threshold):
 
     df = df.copy()
     
     df["month"] = df["time"].dt.month
 
-    monthly_thresholds = df.groupby("month")["prcp"].apply(lambda x: np.percentile(x[x > 0], 95)).to_dict()
+    monthly_thresholds = df.groupby("month")["prcp"].apply(lambda x: np.percentile(x[x > 0], risk_threshold)).to_dict()
 
     df["monthly_threshold"] = df["month"].map(monthly_thresholds)
 

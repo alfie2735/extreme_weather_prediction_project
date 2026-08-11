@@ -34,7 +34,7 @@ station = st.sidebar.selectbox(
     ["London Heathrow", "Manchester Airport", "Cardiff", "Edinburgh"]
 )
 
-st.sidebar.header("⚙️ Simulation Parameters")
+st.sidebar.header("Simulation Parameters")
 
 # 1. Interactive Date Range Selector
 date_range = st.sidebar.slider(
@@ -64,7 +64,7 @@ st.sidebar.markdown("""
 ### Model Parameters:
 *   **Classifier:** Regularised Random Forest
 *   **Target Metric:** Recall (TPR)
-*   **Extreme Threshold:** Dynamic Monthly 95th Percentile
+*   **Extreme Threshold:** Dynamic Monthly Percentile
 """)
 
 # ----------------- Main Dashboard -----------------
@@ -72,20 +72,20 @@ st.write(f"### Current Station Analysis: **{station}**")
 
 # Simulate loading and preprocessing data
 @st.cache_data # Caches data so changing sidebar options is lightning fast
-def get_processed_data(start, end):
+def get_processed_data(start, end, risk_threshold):
     # In practice, point this to your filtered master dataset or individual files
     df_raw = load_and_preprocess(start, end)
-    df_thresholded = compute_extreme_thresholds(df_raw)
+    df_thresholded = compute_extreme_thresholds(df_raw, risk_threshold)
     df_final = engineer_features(df_thresholded)
     return df_final
 
-df = get_processed_data(start, end)
+df = get_processed_data(start, end, risk_threshold)
 
 # 2. Interactive Columns for Visualisations
 chart_col, data_col = st.columns([2, 1])
 
 with chart_col:
-    st.subheader("🌲 Feature Importances")
+    st.subheader("Feature Importances")
     # Generate Feature Importance Chart dynamically
     fig, ax = plt.subplots(figsize=(8, 4.5))
     
@@ -99,7 +99,7 @@ with chart_col:
     st.pyplot(fig)
 
 with data_col:
-    st.subheader("🔍 Engineered Dataset Feature Sample")
+    st.subheader("Engineered Dataset Feature Sample")
     st.write("Inspect the inputs sent to the Random Forest model:")
     cols_to_show = ['pres', 'pres_lag_1', 'pres_lag_2', 'extreme_rain']
     st.dataframe(df[cols_to_show].head(10), use_container_width=True)
