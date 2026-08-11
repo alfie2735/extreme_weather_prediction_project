@@ -143,23 +143,7 @@ st.plotly_chart(fig, use_container_width=True)
 # 2. Interactive Columns for Visualisations
 chart_col, data_col = st.columns([2, 1])
 
-with chart_col:
-    st.subheader("Feature Importances")
-    # Generate Feature Importance Chart dynamically
-    fig, ax = plt.subplots(figsize=(8, 4.5))
-    
-    # Simulated or loaded feature weights
-    features = ['Current Pressure', '48h Pressure Lag', 'Relative Humidity', 'Sine Day of Year', 'Cosine Day of Year']
-    importances = [0.35, 0.22, 0.18, 0.15, 0.10]
-    
-    sns.barplot(x=importances, y=features, palette="viridis", ax=ax)
-    ax.set_xlabel("Relative Importance Weight")
-    plt.tight_layout()
-    st.pyplot(fig)
-
-
-with data_col:
-    st.subheader("Engineered Dataset Feature Sample")
-    st.write("Inspect the inputs sent to the Random Forest model:")
-    cols_to_show = ['pres', 'pres_lag_1', 'pres_lag_2', 'extreme_rain']
-    st.dataframe(df[cols_to_show].head(10), use_container_width=True)
+st.subheader("Engineered Dataset Feature Sample")
+st.write("Inspect the inputs sent to the Random Forest model:")
+cols_to_show = ['pres', 'pres_lag_1', 'pres_lag_2', 'extreme_rain']
+st.dataframe(df[cols_to_show].head(10), use_container_width=True)
