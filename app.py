@@ -81,6 +81,64 @@ def get_processed_data(start, end, risk_threshold):
 
 df = get_processed_data(start, end, risk_threshold)
 
+# 1. Load the pre-trained model from joblib file
+@st.cache_resource
+def load_model():
+    # Adjust path if stored in a subfolder e.g., 'models/heathrow_rf_model.joblib'
+    return joblib.load('models/rf_model.joblib')
+
+try:
+    model = load_model()
+
+    # 2. Define the exact feature names used during model.fit()
+    feature_names = [
+        'Current Pressure (hPa)', 
+        '48h Pressure Lag', 
+        'Relative Humidity (%)', 
+        'Sine Day of Year', 
+        'Cosine Day of Year'
+    ]
+
+    # 3. Extract feature importances and pair with names
+    importances = model.feature_importances_
+    
+    # Create a structured DataFrame and sort by importance
+    df_importance = pd.DataFrame({
+        'Feature': feature_names,
+        'Importance': importances
+    }).sort_values(by='Importance', ascending=True)  # Ascending for horizontal bar plot
+
+    # 4. Build an interactive Plotly horizontal bar chart
+    st.subheader("Random Forest Feature Importances")
+    st.caption("Extracted directly from the saved `.joblib` model weights:")
+
+    fig = px.bar(
+        df_importance,
+        x='Importance',
+        y='Feature',
+        orientation='h',
+        text_auto='.1%',  # Format values as percentages on bars
+        title="Predictive Weight by Feature",
+        labels={'Importance': 'Relative Importance Weight', 'Feature': 'Predictor Variable'},
+        color='Importance',
+        color_continuous_scale='Viridis'
+    )
+
+    # Clean layout styling
+    fig.update_layout(
+        showlegend=False,
+        height=350,
+        margin=dict(l=20, r=20, t=40, b=20),
+        xaxis_title="Relative Weight",
+        yaxis_title=""
+    )
+
+    # Render in Streamlit
+    st.plotly_chart(fig, use_container_width=True)
+
+except FileNotFoundError:
+    st.error("Model file 'models/heathrow_rf_model.joblib' not found. Please ensure it is present in your repo directory.")
+
 # 2. Interactive Columns for Visualisations
 chart_col, data_col = st.columns([2, 1])
 
@@ -97,6 +155,7 @@ with chart_col:
     ax.set_xlabel("Relative Importance Weight")
     plt.tight_layout()
     st.pyplot(fig)
+
 
 with data_col:
     st.subheader("Engineered Dataset Feature Sample")
