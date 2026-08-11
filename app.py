@@ -102,15 +102,6 @@ def get_trained_model(df):
 
 model, feature_names = get_trained_model(df)
 
-# 2. Define the exact feature names used during model.fit()
-feature_names = [
-    'Current Pressure (hPa)', 
-    '48h Pressure Lag', 
-    'Relative Humidity (%)', 
-    'Sine Day of Year', 
-    'Cosine Day of Year'
-]
-
 # 3. Extract feature importances and pair with names
 importances = model.feature_importances_
 
