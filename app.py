@@ -41,7 +41,7 @@ date_range = st.sidebar.slider(
     "Select Historical Window (Years):",
     min_value=5,
     max_value=20,
-    value=10
+    value=20
 )
 
 # 2. Interactive Risk Threshold Control

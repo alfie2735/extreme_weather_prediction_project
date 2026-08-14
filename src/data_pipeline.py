@@ -2,9 +2,9 @@ import datetime as dt
 import meteostat as ms
 import numpy as np
 
-def load_and_preprocess(start, end):
+def load_and_preprocess(start, end, lat, lon, elv):
 
-    point = ms.Point(51.4776, -0.4619, 25)
+    point = ms.Point(lat, lon, elv)
 
     station_info = ms.stations.nearby(point, limit = 1, radius = 50000000).reset_index().iloc[0]
 
@@ -18,7 +18,7 @@ def load_and_preprocess(start, end):
 
     df = df.reset_index()
 
-    return df
+    return station_name, df
 
 def compute_extreme_thresholds(df, risk_threshold):
 
