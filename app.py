@@ -23,24 +23,23 @@ st.title("⛈️ Predicting the Unpredictable")
 st.markdown("""
 An end-to-end Machine Learning pipeline predicting extreme rainfall events using 20 years of historical climate data. 
 Inspired by the forecasting methodologies of the **Met Office**.
-THIS APP IS STILL UNDER DEVELOPMENT - SOME DATA MAY BE INCORRECTS
+THIS APP IS STILL UNDER DEVELOPMENT - SOME DATA MAY BE INCORRECT
 """)
 
 # ----------------- Sidebar Controls -----------------
 st.sidebar.header("Pipeline Configuration")
 
-# Dropdown for Station Selection
-station = st.sidebar.selectbox(
-    "Select Weather Station:",
-    ["London Heathrow", "Manchester Airport", "Cardiff", "Edinburgh"]
-)
+# Selecting Location (defaults to Heathrow)
+lat = st.sidebar.number_input("Latitude:", min_value = -90, max_value = 90, value = 51.4833)
+lon = st.sidebar.number_input("Longitude:", min_value = -180, max_value = 180, value = -0.45)
+elv = st.sidebar.number_input("Elevation:", min_value = 0, max_value = 10000, value = 24)
 
 st.sidebar.header("Simulation Parameters")
 
 # 1. Interactive Date Range Selector
 date_range = st.sidebar.slider(
     "Select Historical Window (Years):",
-    min_value=1,
+    min_value=5,
     max_value=20,
     value=10
 )
@@ -69,18 +68,19 @@ st.sidebar.markdown("""
 """)
 
 # ----------------- Main Dashboard -----------------
-st.write(f"### Current Station Analysis: **{station}**")
 
 # Simulate loading and preprocessing data
 @st.cache_data # Caches data so changing sidebar options is lightning fast
-def get_processed_data(start, end, risk_threshold):
+def get_processed_data(start, end, risk_threshold, lat, lon, elv):
     # In practice, point this to your filtered master dataset or individual files
-    df_raw = load_and_preprocess(start, end)
+    loc, df_raw = load_and_preprocess(start, end, lat, lon, elv)
     df_thresholded = compute_extreme_thresholds(df_raw, risk_threshold)
     df_final = engineer_features(df_thresholded)
-    return df_final
+    return loc, df_final
 
-df = get_processed_data(start, end, risk_threshold)
+station, df = get_processed_data(start, end, risk_threshold, lat, lon, elv)
+
+st.write(f"### Current Station Analysis: **{station}**")
 
 @st.cache_resource
 def get_trained_model(df):
@@ -114,7 +114,6 @@ df_importance = pd.DataFrame({
 
 # 4. Build an interactive Plotly horizontal bar chart
 st.subheader("Random Forest Feature Importances")
-st.caption("Extracted directly from the saved `.joblib` model weights:")
 
 fig = px.bar(
     df_importance,
@@ -144,6 +143,5 @@ st.plotly_chart(fig, use_container_width=True)
 chart_col, data_col = st.columns([2, 1])
 
 st.subheader("Engineered Dataset Feature Sample")
-st.write("Inspect the inputs sent to the Random Forest model:")
 cols_to_show = ['pres', 'pres_lag_1', 'pres_lag_2', 'extreme_rain']
 st.dataframe(df[cols_to_show].head(10), use_container_width=True)
