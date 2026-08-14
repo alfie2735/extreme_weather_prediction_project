@@ -30,9 +30,9 @@ THIS APP IS STILL UNDER DEVELOPMENT - SOME DATA MAY BE INCORRECT
 st.sidebar.header("Pipeline Configuration")
 
 # Selecting Location (defaults to Heathrow)
-lat = st.sidebar.number_input("Latitude:", min_value = -90, max_value = 90, value = 51.4833)
-lon = st.sidebar.number_input("Longitude:", min_value = -180, max_value = 180, value = -0.45)
-elv = st.sidebar.number_input("Elevation:", min_value = 0, max_value = 10000, value = 24)
+lat = st.sidebar.number_input("Latitude:", min_value = -90.0, max_value = 90.0, value = 51.4833, step=0.0001, format="%.4f")
+lon = st.sidebar.number_input("Longitude:", min_value = -180.0, max_value = 180.0, value = -0.45, step=0.0001, format="%.4f")
+elv = st.sidebar.number_input("Elevation:", min_value = 0.0, max_value = 10000.0, value = 24.0, step=0.1, format="%.1f")
 
 st.sidebar.header("Simulation Parameters")
 
