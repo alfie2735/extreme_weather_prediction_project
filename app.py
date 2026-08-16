@@ -155,7 +155,7 @@ st.subheader("Predict Today's Extreme Rainfall Risk")
 st.markdown("---")
 res_col1, res_col2 = st.columns(2)
 
-res_col1.metric("Predicted Extreme Risk Probability", f"{probability:.5%}")
+res_col1.metric("Predicted Extreme Risk Probability", f"{probability:.1%}")
 
 if prediction == 1 or probability >= 0.5:
     res_col2.error("**High Risk:** Environmental conditions favor extreme rainfall today.")
