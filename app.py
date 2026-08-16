@@ -84,8 +84,8 @@ st.write(f"### Current Station Analysis: **{station}**")
 
 @st.cache_resource
 def get_trained_model(df):
-    X = df.drop(["extreme_rain"], axis="columns")
-    y = df["extreme_rain"]
+    X = df.drop(["extreme_rain"], axis="columns").iloc[:-1]
+    y = df["extreme_rain"].iloc[:-1]
 
     split_idx = int(len(X) * 0.8)
     X_train = X.iloc[:split_idx]
@@ -101,7 +101,17 @@ def get_trained_model(df):
     rf_model.fit(X_train, y_train)
     return rf_model, X.columns.tolist()
 
+def predict(df, model):
+    cd = df.iloc[-1:].drop(["extreme_rain"], axis = "columns")
+
+    pred = model.predict_proba(cd)[0][1]
+    prob = model.predict(cd)[0]
+
+    return pred, prob
+
 model, feature_names = get_trained_model(df)
+
+prediction, probability = predict(df, model)
 
 # 3. Extract feature importances and pair with names
 importances = model.feature_importances_
@@ -139,9 +149,15 @@ fig.update_layout(
 # Render in Streamlit
 st.plotly_chart(fig, use_container_width=True)
 
-# 2. Interactive Columns for Visualisations
-chart_col, data_col = st.columns([2, 1])
+# 2. Prediction
+st.subheader("Predict Today's Extreme Rainfall Risk")
 
-st.subheader("Engineered Dataset Feature Sample")
-cols_to_show = ['pres', 'pres_lag_1', 'pres_lag_2', 'extreme_rain']
-st.dataframe(df[cols_to_show].head(10), use_container_width=True)
+st.markdown("---")
+res_col1, res_col2 = st.columns(2)
+
+res_col1.metric("Predicted Extreme Risk Probability", f"{probability:.1%}")
+
+if prediction == 1 or probability >= 0.5:
+    res_col2.error("**High Risk:** Environmental conditions favor extreme rainfall today.")
+else:
+    res_col2.success("**Low Risk:** Conditions remain within normal threshold limits.")
