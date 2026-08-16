@@ -104,8 +104,8 @@ def get_trained_model(df):
 def predict(df, model):
     cd = df.iloc[-1:].drop(["extreme_rain"], axis = "columns")
 
-    pred = model.predict_proba(cd)[0][1]
-    prob = model.predict(cd)[0]
+    prob = model.predict_proba(cd)[0][1]
+    pred = model.predict(cd)[0]
 
     return pred, prob
 
