@@ -7,34 +7,32 @@ from datetime import datetime, timedelta
 from sklearn.ensemble import RandomForestClassifier
 import plotly.express as px
 
-# Import your custom pipeline modules
 from src.data_pipeline import load_and_preprocess, compute_extreme_thresholds
 from src.feature_engineering import engineer_features
 
 # Set page configurations
 st.set_page_config(
-    page_title="UK Extreme Weather Predictor",
+    page_title="Extreme Weather Prediction",
     page_icon="⛈️",
     layout="wide"
 )
 
 # ----------------- App Header -----------------
-st.title("⛈️ Predicting the Unpredictable")
+st.title("⛈️ Extreme Weather Prediction")
 st.markdown("""
 An end-to-end Machine Learning pipeline predicting extreme rainfall events using 20 years of historical climate data. 
 Inspired by the forecasting methodologies of the **Met Office**.
-THIS APP IS STILL UNDER DEVELOPMENT - SOME DATA MAY BE INCORRECT
 """)
 
 # ----------------- Sidebar Controls -----------------
-st.sidebar.header("Pipeline Configuration")
+st.sidebar.header("Location")
 
-# Selecting Location (defaults to Heathrow)
+# Select location (defaults to Heathrow)
 lat = st.sidebar.number_input("Latitude:", min_value = -90.0, max_value = 90.0, value = 51.4833, step=0.0001, format="%.4f")
 lon = st.sidebar.number_input("Longitude:", min_value = -180.0, max_value = 180.0, value = -0.45, step=0.0001, format="%.4f")
 elv = st.sidebar.number_input("Elevation:", min_value = 0.0, max_value = 10000.0, value = 24.0, step=0.1, format="%.1f")
 
-st.sidebar.header("Simulation Parameters")
+st.sidebar.header("Model Parameters")
 
 # 1. Interactive Date Range Selector
 date_range = st.sidebar.slider(
@@ -51,17 +49,17 @@ risk_threshold = st.sidebar.slider(
     max_value=99.0,
     value=95.0,
     step=0.5,
-    help="Higher values define stricter 'extreme' rain events."
+    help="Higher values define stricter 'extreme' rainfall events"
 )
 
 # Automatically calculate dynamic start and end dates relative to today
 end = datetime.now()
 start = end - timedelta(days=365 * date_range)
 
-# Sidebar description
+# Sidebar information
 st.sidebar.markdown("""
 ---
-### Model Parameters:
+### Model Information:
 *   **Classifier:** Regularised Random Forest
 *   **Target Metric:** Recall (TPR)
 *   **Extreme Threshold:** Dynamic Monthly Percentile
@@ -72,7 +70,6 @@ st.sidebar.markdown("""
 # Simulate loading and preprocessing data
 @st.cache_data # Caches data so changing sidebar options is lightning fast
 def get_processed_data(start, end, risk_threshold, lat, lon, elv):
-    # In practice, point this to your filtered master dataset or individual files
     loc, df_raw = load_and_preprocess(start, end, lat, lon, elv)
     df_thresholded = compute_extreme_thresholds(df_raw, risk_threshold)
     df_final = engineer_features(df_thresholded)
@@ -80,7 +77,7 @@ def get_processed_data(start, end, risk_threshold, lat, lon, elv):
 
 station, df = get_processed_data(start, end, risk_threshold, lat, lon, elv)
 
-st.write(f"### Current Station Analysis: **{station}**")
+st.write(f"### Current Station: **{station}**")
 
 @st.cache_resource
 def get_trained_model(df):
@@ -113,7 +110,7 @@ model, feature_names = get_trained_model(df)
 
 prediction, probability = predict(df, model)
 
-# 3. Extract feature importances and pair with names
+# Extract feature importances and pair with names
 importances = model.feature_importances_
 
 # Create a structured DataFrame and sort by importance
@@ -122,7 +119,7 @@ df_importance = pd.DataFrame({
     'Importance': importances
 }).sort_values(by='Importance', ascending=True)  # Ascending for horizontal bar plot
 
-# 4. Build an interactive Plotly horizontal bar chart
+# Build an interactive Plotly horizontal bar chart
 st.subheader("Random Forest Feature Importances")
 
 fig = px.bar(
@@ -134,7 +131,7 @@ fig = px.bar(
     title="Predictive Weight by Feature",
     labels={'Importance': 'Relative Importance Weight', 'Feature': 'Predictor Variable'},
     color='Importance',
-    color_continuous_scale='Viridis'
+    color_continuous_scale='Magma'
 )
 
 # Clean layout styling
@@ -149,7 +146,8 @@ fig.update_layout(
 # Render in Streamlit
 st.plotly_chart(fig, use_container_width=True)
 
-# 2. Prediction
+
+
 st.subheader("Predict Today's Extreme Rainfall Risk")
 
 st.markdown("---")
