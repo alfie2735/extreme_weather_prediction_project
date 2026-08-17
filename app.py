@@ -131,7 +131,7 @@ fig = px.bar(
     title="Predictive Weight by Feature",
     labels={'Importance': 'Relative Importance Weight', 'Feature': 'Predictor Variable'},
     color='Importance',
-    color_continuous_scale='Magma'
+    color_continuous_scale='Blues'
 )
 
 # Clean layout styling
